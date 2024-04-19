@@ -1,0 +1,20 @@
+{
+  "name": "dish",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "tsc && node .",
+    "deploy": "yarn build && node dist/deploy.js && node ."
+  },
+  "packageManager": "yarn@4.1.1",
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "tsx": "^4.7.2",
+    "typescript": "^5.4.5"
+  }
+}
