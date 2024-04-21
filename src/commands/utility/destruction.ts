@@ -1,4 +1,5 @@
 import { PermissionsBitField, SlashCommandBuilder } from 'discord.js';
+import Logger from '../../helper/logger';
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -7,16 +8,16 @@ module.exports = {
     async execute(interaction: any) {
         // check if the user is an administrator
         if (interaction.member?.permissions instanceof PermissionsBitField && interaction.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
-            console.log(`[INFO] ${interaction.user.id} is an administrator`);
+            Logger.info(`${interaction.user.id} is an administrator`);
 
             if (!interaction.guild) return;
             for (const [memberId, member] of interaction.guild.voiceStates.cache) {
                 member.disconnect();
-                console.log(`[EXEC] Disconnected ${memberId}`);
+                Logger.success(`Disconnected ${memberId}`);
             }
             await interaction.reply({ content: 'Disconnected all users from the voice channel', ephemeral: true});
         } else {
-            console.log(`[SKIP] ${interaction.user.id} is not an administrator`);
+            Logger.warning(`${interaction.user.id} is not an administrator`);
             await interaction.reply({ content: 'You must be an administrator to use this command', ephemeral: true});
         }
     },

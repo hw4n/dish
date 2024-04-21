@@ -1,9 +1,10 @@
 import { Events, Message } from 'discord.js';
+import Logger from '../helper/logger';
 
 module.exports = {
     name: Events.MessageCreate,
     once: true,
     execute(message: Message) {
-        console.log(`${message.author.id} : ${message.content}`);
+        Logger.chat(`${message.author.id} : ${message.content}`);
     },
 };

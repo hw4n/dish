@@ -1,4 +1,5 @@
 import { Events, Interaction } from 'discord.js';
+import Logger from '../helper/logger';
 
 module.exports = {
     name: Events.InteractionCreate,
@@ -8,7 +9,7 @@ module.exports = {
         const command = interaction.client.commands.get(interaction.commandName);
 
         if (!command) {
-            console.log(`[WARN] Command '${interaction.commandName}' not found`);
+            Logger.warning(`Command '${interaction.commandName}' not found`);
             return;
         }
 
