@@ -1,4 +1,4 @@
-import { Events, Interaction } from "discord.js";
+import { Events, Interaction } from 'discord.js';
 
 module.exports = {
     name: Events.InteractionCreate,
@@ -8,7 +8,7 @@ module.exports = {
         const command = interaction.client.commands.get(interaction.commandName);
 
         if (!command) {
-            console.log(`[WARN] Command "${interaction.commandName}" not found`);
+            console.log(`[WARN] Command '${interaction.commandName}' not found`);
             return;
         }
 

@@ -1,4 +1,4 @@
-import { Events, Message } from "discord.js";
+import { Events, Message } from 'discord.js';
 
 module.exports = {
     name: Events.MessageCreate,

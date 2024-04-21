@@ -1,8 +1,8 @@
-import "dotenv/config";
-import { Client, GatewayIntentBits, Collection } from "discord.js";
+import 'dotenv/config';
+import { Client, GatewayIntentBits, Collection } from 'discord.js';
 
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from 'fs';
+import * as path from 'path';
 
 const token = process.env.DISCORD_TOKEN;
 const client = new Client({ intents: [
@@ -16,22 +16,22 @@ client.commands = new Collection();
 
 const commandsPath = path.join(__dirname, 'commands'); // we'll be working on {pwd}\commands
 const thingsInPath = fs.readdirSync(commandsPath); // read dirs/files in {pwd}\commands
-console.log(`[INFO] Found "${thingsInPath}" in ${commandsPath}`);
+console.log(`[INFO] Found '${thingsInPath}' in ${commandsPath}`);
 
 for (const thing of thingsInPath) { 
 	// because we don't know if it's a file or a directory
 	const thingPath = path.join(commandsPath, thing);
-	console.log(`[INFO] Checking "${thing}"`);
+	console.log(`[INFO] Checking '${thing}'`);
 
 	if (fs.statSync(thingPath).isFile()) {
-		console.log(`[SKIP] "${thing}" is not a directory`);
+		console.log(`[SKIP] '${thing}' is not a directory`);
 		continue;
 	}
-	console.log(`[INFO] "${thing}" is a directory`);
+	console.log(`[INFO] '${thing}' is a directory`);
 
 	// now we're sure it's a directory, let's read .js files in it
 	const commandFiles = fs.readdirSync(thingPath).filter(file => file.endsWith('.js'));
-	console.log(`[INFO] Found "${commandFiles}" in "${thing}"`);
+	console.log(`[INFO] Found '${commandFiles}' in '${thing}'`);
 
 	// iterate through .js files
 	for (const file of commandFiles) {
@@ -40,9 +40,9 @@ for (const thing of thingsInPath) {
 
 		if ('data' in command && 'execute' in command) {
 			client.commands.set(command.data.name, command);
-			console.log(`[INFO] Successfully loaded "${command.data.name}" from "${file}"`);
+			console.log(`[INFO] Successfully loaded '${command.data.name}' from '${file}'`);
 		} else {
-			console.log(`[WARN] The command at ${filePath} is missing a required "data" or "execute" property.`);
+			console.log(`[WARN] The command at ${filePath} is missing a required 'data' or 'execute' property.`);
 		}
 	}
 }
