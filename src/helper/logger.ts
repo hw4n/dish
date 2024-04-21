@@ -21,7 +21,15 @@ class Logger {
     }
 
     static chat(message: string) {
-        console.log(chalk.inverse(`[CHAT] ${message}`));
+        console.log(chalk.inverse(`[CHAT CREATE] ${message}`));
+    }
+
+    static chatUpdate(message: string) {
+        console.log(chalk.bgYellow(`[CHAT UPDATE] ${message}`));
+    }
+
+    static chatDelete(message: string) {
+        console.log(chalk.bgMagenta(`[CHAT DELETE] ${message}`));
     }
 }
 
