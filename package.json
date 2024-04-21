@@ -5,7 +5,7 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "tsc && node .",
-    "deploy": "yarn build && node dist/deploy.js && node ."
+    "deploy": "tsc && node dist/deploy.js && node ."
   },
   "packageManager": "yarn@4.1.1",
   "dependencies": {
