@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { Client, GatewayIntentBits, Events, Collection, ChatInputCommandInteraction, Message, PermissionsBitField } from "discord.js";
+import { Client, GatewayIntentBits, Collection } from "discord.js";
 
 import * as fs from "fs";
 import * as path from "path";
@@ -47,35 +47,17 @@ for (const thing of thingsInPath) {
 	}
 }
 
-client.once(Events.ClientReady, readyClient => {
-	console.log(`[INFO] Logged in as ${readyClient.user?.tag}`);
-});
+const eventsPath = path.join(__dirname, 'events');
+const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 
-client.on(Events.MessageCreate, (message: Message) => {
-	console.log(`${message.author.id} : ${message.content}`);
-});
-
-client.on(Events.InteractionCreate, interaction => {
-	if (!interaction.isChatInputCommand()) return;
-
-	const command = client.commands.get(interaction.commandName);
-
-	if (!command) {
-		console.log(`[WARN] Command "${interaction.commandName}" not found`);
-		return;
+for (const file of eventFiles) {
+	const filePath = path.join(eventsPath, file);
+	const event = require(filePath);
+	if (event.once) {
+		client.once(event.name, (...args) => event.execute(...args));
+	} else {
+		client.on(event.name, (...args) => event.execute(...args));
 	}
-
-	try {
-		command.execute(interaction);
-	} catch (error) {
-		console.error(error);
-		
-		if (interaction.deferred || interaction.replied) {
-			interaction.followUp({ content: 'Error while executing, refer to console for more information.', ephemeral: true });
-		} else {
-			interaction.reply({ content: 'Error while executing, refer to console for more information.', ephemeral: true });
-		}
-	}
-});
+}
 
 client.login(token);
