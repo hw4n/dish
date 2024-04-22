@@ -3,6 +3,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "test": "tsc",
     "build": "tsc",
     "start": "tsc && node .",
     "deploy": "tsc && node dist/deploy.js && node ."
