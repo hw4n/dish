@@ -3,8 +3,10 @@ import { Client, GatewayIntentBits, Collection } from 'discord.js';
 
 import * as fs from 'fs';
 import * as path from 'path';
+import mongoose from 'mongoose';
 
 import Logger from './helper/logger';
+import Chat from './models/Chat';
 
 const token = process.env.DISCORD_TOKEN;
 const client = new Client({ intents: [
@@ -64,5 +66,14 @@ for (const file of eventFiles) {
 		client.on(event.name, (...args) => event.execute(...args));
 	}
 }
+
+// add database connection here
+
+if (!process.env.MONGODB_URI) {
+	Logger.error('MONGODB_URI is not defined in .env');
+	process.exit(1);
+}
+
+mongoose.connect(process.env.MONGODB_URI);
 
 client.login(token);
