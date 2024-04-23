@@ -4,6 +4,7 @@ import Logger from '../helper/logger';
 module.exports = {
     name: Events.MessageCreate,
     execute(message: Message) {
+        if (message.guildId !== (process.env.DISCORD_PRODGUILD || process.env.DISCORD_TESTGUILD || "")) return;
         if (!message.content) {
             if (message.attachments) {
                 const attachments = message.attachments.map(a => ({name: a.name, link: a.url}));

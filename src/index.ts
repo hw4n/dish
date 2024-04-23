@@ -74,6 +74,10 @@ if (!process.env.MONGODB_URI) {
 	process.exit(1);
 }
 
+mongoose.connection.on('connected', () => {
+	Logger.success('Connected to MongoDB');
+});
+
 mongoose.connect(process.env.MONGODB_URI);
 
 client.login(token);
