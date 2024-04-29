@@ -9,7 +9,7 @@ module.exports = {
         if (!interaction.guild) return;
         for (const [memberId, member] of interaction.guild.voiceStates.cache) {
             member.disconnect();
-            Logger.success(`Disconnected ${memberId}`);
+            Logger.success(`${interaction.user.id} disconnected ${memberId}`);
         }
         await interaction.reply({ content: 'Disconnected all users from the voice channel', ephemeral: true});
     },
