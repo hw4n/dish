@@ -5,6 +5,7 @@ import Chat from '../models/Chat';
 module.exports = {
     name: Events.MessageCreate,
     execute(message: Message) {
+        if (message.author.bot) return;
         if (message.guildId !== (process.env.DISCORD_PRODGUILD || process.env.DISCORD_TESTGUILD || "")) return;
         if (!message.content) {
             if (message.attachments) {

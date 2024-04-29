@@ -4,6 +4,7 @@ import Logger from '../helper/logger';
 module.exports = {
     name: Events.InteractionCreate,
     execute(interaction: Interaction) {
+        if (interaction.user.bot) return;
         if (!interaction.isChatInputCommand()) return;
 
         const command = interaction.client.commands.get(interaction.commandName);

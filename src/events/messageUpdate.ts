@@ -6,6 +6,7 @@ import * as CryptoJS from 'crypto-js';
 module.exports = {
     name: Events.MessageUpdate,
     execute(message: Message) {
+        if (message.author.bot) return;
         if (message.guildId !== (process.env.DISCORD_PRODGUILD || process.env.DISCORD_TESTGUILD || "")) return;
 
         Chat.findOne({
