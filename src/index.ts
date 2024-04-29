@@ -6,7 +6,6 @@ import * as path from 'path';
 import mongoose from 'mongoose';
 
 import Logger from './helper/logger';
-import Chat from './models/Chat';
 
 const token = process.env.DISCORD_TOKEN;
 const client = new Client({ intents: [
