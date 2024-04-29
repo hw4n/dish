@@ -12,15 +12,16 @@ module.exports = {
     .setDescription('Generates answer from GPT model')
     .addStringOption(option => option.setName('question').setDescription('Question to ask').setRequired(true)),
     async execute(interaction: any) {
-        const chatCompletion = await openai.chat.completions.create({
+        await interaction.deferReply();
+        await openai.chat.completions.create({
             messages: [{role: 'user', content: interaction.options.getString('question')}],
             model: 'gpt-3.5-turbo',
             max_tokens: 500,
+        }).then(chatCompletion => {
+            interaction.editReply({ content: chatCompletion.choices[0].message.content });
         }).catch((err) => {
             Logger.error(err);
             interaction.reply({ content: `${err.status} ${err.name}` });
         });
-        if (!chatCompletion) return;
-        await interaction.reply({ content: chatCompletion.choices[0].message.content });
     },
 };

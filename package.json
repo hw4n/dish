@@ -6,7 +6,8 @@
     "test": "tsc",
     "build": "tsc",
     "start": "tsc && node .",
-    "deploy": "tsc && node dist/deploy.js && node ."
+    "deploy": "tsc && node dist/deploy.js",
+    "deployStart": "tsc && node dist/deploy.js && node ."
   },
   "packageManager": "yarn@4.1.1",
   "dependencies": {
