@@ -8,8 +8,6 @@ module.exports = {
     .setName('stat')
     .setDescription('Replies with user\'s statistics'),
     async execute(interaction: any) {
-        if (interaction.guild !== Local.production) return;
-
         await interaction.deferReply();
         await User.findOne({ id: interaction.user.id }).then((user) => {
             if (!user) {

@@ -13,8 +13,6 @@ module.exports = {
     .setDescription('Generates answer from GPT model')
     .addStringOption(option => option.setName('question').setDescription('Question to ask').setRequired(true)),
     async execute(interaction: any) {
-        if (interaction.guild !== Local.production) return;
-
         Logger.info(`${interaction.user.id} asked (${interaction.options.getString('question')})`);
         await interaction.deferReply();
         await openai.chat.completions.create({
