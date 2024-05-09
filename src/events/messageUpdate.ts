@@ -2,6 +2,7 @@ import { Events, Message } from 'discord.js';
 import Logger from '../helper/logger';
 import Chat from '../models/Chat';
 import * as CryptoJS from 'crypto-js';
+import User from '../models/User';
 
 module.exports = {
     name: Events.MessageUpdate,
@@ -19,6 +20,8 @@ module.exports = {
             chat.edited = true;
 
             chat.save().then(() => Logger.chatUpdate(`${chat.cid} edited`));
-        })
+        });
+        User.findOneAndUpdate({ id: message.author.id }, { id: message.author.id, $inc: { totalMessagesEdited: 1 } }, { new: true, upsert: true })
+        .then((user) => Logger.chat(`${message.author.id} totalMessagesEdited ${user.totalMessagesEdited}`));
     },
 };

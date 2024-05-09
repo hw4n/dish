@@ -1,5 +1,6 @@
 import { Events, Interaction } from 'discord.js';
 import Logger from '../helper/logger';
+import User from '../models/User';
 
 module.exports = {
     name: Events.InteractionCreate,
@@ -16,6 +17,8 @@ module.exports = {
 
         try {
             command.execute(interaction);
+            User.findOneAndUpdate({ id: interaction.user.id }, { id: interaction.user.id, $inc: { totalCommandsExecuted: 1 } }, { new: true, upsert: true })
+                .then((user) => Logger.chat(`${interaction.user.id} totalCommandsExecuted ${user.totalCommandsExecuted}`));
         } catch (error) {
             console.error(error);
             

@@ -1,6 +1,7 @@
 import { Events, Message } from 'discord.js';
 import Logger from '../helper/logger';
 import Chat from '../models/Chat';
+import User from '../models/User';
 
 module.exports = {
     name: Events.MessageCreate,
@@ -26,5 +27,7 @@ module.exports = {
         }
         Chat.create({ author: message.author.id, message: message.content, timestamp: message.createdTimestamp })
             .then((chat) => Logger.chat(`${chat.cid} created`));
+        User.findOneAndUpdate({ id: message.author.id }, { id: message.author.id, $inc: { totalMessagesSent: 1 } }, { new: true, upsert: true })
+            .then((user) => Logger.chat(`${message.author.id} totalMessagesSent ${user.totalMessagesSent}`));
     },
 };

@@ -6,6 +6,7 @@ import * as path from 'path';
 import mongoose from 'mongoose';
 
 import Logger from './helper/logger';
+import User from './models/User';
 
 const token = process.env.DISCORD_TOKEN;
 const client = new Client({ intents: [
@@ -75,8 +76,7 @@ if (!process.env.MONGODB_URI) {
 
 mongoose.connection.on('connected', () => {
 	Logger.success('Connected to MongoDB');
+	client.login(token);
 });
 
 mongoose.connect(process.env.MONGODB_URI);
-
-client.login(token);
