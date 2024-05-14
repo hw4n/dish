@@ -17,8 +17,8 @@ module.exports = {
         await interaction.deferReply();
         await openai.chat.completions.create({
             messages: [{role: 'user', content: interaction.options.getString('question')}],
-            model: 'gpt-3.5-turbo',
-            max_tokens: 500,
+            model: 'gpt-4o',
+            max_tokens: 1000,
         }).then(chatCompletion => {
             interaction.editReply({ content: chatCompletion.choices[0].message.content });
         }).catch((err) => {
