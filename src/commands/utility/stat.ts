@@ -9,28 +9,34 @@ module.exports = {
     .setDescription('Replies with user\'s statistics'),
     async execute(interaction: any) {
         await interaction.deferReply();
-        await User.findOne({ id: interaction.user.id }).then((user) => {
+        
+        await User.findOne({ id: interaction.user.id }).then(async (user) => {
             if (!user) {
                 interaction.editReply({ content: `No statistics found for ${interaction.user.toString()}` });
                 return;
             }
+
+            const sentRank = await User.countDocuments({ totalMessagesSent: { $gt: user.totalMessagesSent } });
+            const editedRank = await User.countDocuments({ totalMessagesEdited: { $gt: user.totalMessagesEdited } });
+            const deletedRank = await User.countDocuments({ totalMessagesDeleted: { $gt: user.totalMessagesDeleted } });
+            
             interaction.editReply({ embeds: [{
                 title: `${interaction.user.globalName}'s statistics`,
                 color: 14737632,
                 fields: [
                     {
                         name: "sent",
-                        value: user.totalMessagesSent,
+                        value: `${user.totalMessagesSent} (#${sentRank + 1})`,
                         inline: true
                     },
                     {
                         name: "edited",
-                        value: user.totalMessagesEdited,
+                        value: `${user.totalMessagesEdited} (#${editedRank + 1})`,
                         inline: true
                     },
                     {
                         name: "deleted",
-                        value: user.totalMessagesDeleted,
+                        value: `${user.totalMessagesDeleted} (#${deletedRank + 1})`,
                         inline: true
                     },
                     {
