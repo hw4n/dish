@@ -10,6 +10,7 @@ interface IUser extends Document {
     totalMessagesDeleted: number;
     totalCommandsExecuted: number;
     initialize(): Promise<void>;
+    balance: number;
 }
 
 const userSchema = new Schema<IUser>({
@@ -37,6 +38,10 @@ const userSchema = new Schema<IUser>({
     totalCommandsExecuted: {
         type: Number,
         default: 0
+    },
+    balance: {
+        type: Number,
+        default: 0
     }
 });
 
@@ -45,6 +50,7 @@ userSchema.methods.initialize = async function() {
     this.totalMessagesSent = (await Chat.find({ author: this.id, edited: false, deleted: false })).length;
     this.totalMessagesEdited = (await Chat.find({ author: this.id, edited: true, deleted: false })).length;
     this.totalMessagesDeleted = (await Chat.find({ author: this.id, deleted: true })).length;
+    this.balance = this.totalMessagesSent * 2 - this.totalMessagesEdited * 0.5 - this.totalMessagesDeleted * 5;
     this.initialized = true;
     this.save();
     Logger.info(`Statistics initialized for ${this.id} - ${this.totalMessagesSent}, ${this.totalMessagesEdited}, ${this.totalMessagesDeleted}`);

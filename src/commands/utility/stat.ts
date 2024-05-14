@@ -37,6 +37,11 @@ module.exports = {
                         name: "commands",
                         value: user.totalCommandsExecuted,
                         inline: true
+                    },
+                    {
+                        name: "balance",
+                        value: user.balance,
+                        inline: true
                     }],
                 thumbnail: {
                     url: interaction.user.avatarURL()
