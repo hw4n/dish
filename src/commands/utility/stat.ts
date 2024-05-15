@@ -19,6 +19,8 @@ module.exports = {
             const sentRank = await User.countDocuments({ totalMessagesSent: { $gt: user.totalMessagesSent } });
             const editedRank = await User.countDocuments({ totalMessagesEdited: { $gt: user.totalMessagesEdited } });
             const deletedRank = await User.countDocuments({ totalMessagesDeleted: { $gt: user.totalMessagesDeleted } });
+            const commandRank = await User.countDocuments({ totalCommandsExecuted: { $gt: user.totalCommandsExecuted } });
+            const balanceRank = await User.countDocuments({ balance: { $gt: user.balance } });
             
             interaction.editReply({ embeds: [{
                 title: `${interaction.user.globalName}'s statistics`,
@@ -41,12 +43,12 @@ module.exports = {
                     },
                     {
                         name: "commands",
-                        value: user.totalCommandsExecuted,
+                        value: `${user.totalCommandsExecuted} (#${commandRank + 1})`,
                         inline: true
                     },
                     {
                         name: "balance",
-                        value: user.balance,
+                        value: `${user.balance} (#${balanceRank + 1})`,
                         inline: true
                     }],
                 thumbnail: {
