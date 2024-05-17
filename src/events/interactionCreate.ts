@@ -1,12 +1,14 @@
 import { Events, Interaction } from 'discord.js';
 import Logger from '../helper/logger';
 import User from '../models/User';
+import Local from '../helper/local';
 
 module.exports = {
     name: Events.InteractionCreate,
     execute(interaction: Interaction) {
         if (interaction.user.bot) return;
         if (!interaction.isChatInputCommand()) return;
+        if (interaction.guild?.id !== Local.targetGuild) return;
 
         const command = interaction.client.commands.get(interaction.commandName);
 

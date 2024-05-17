@@ -20,7 +20,12 @@ module.exports = {
             model: 'gpt-4o',
             max_tokens: 1000,
         }).then(chatCompletion => {
-            interaction.editReply({ content: chatCompletion.choices[0].message.content });
+            const chunks = chatCompletion.choices[0].message.content!.match(/[\s\S]{1,2000}/g);
+            interaction.editReply({ content: chunks![0] });
+            for (let i = 1; i < chunks!.length; i++) {
+                interaction.followUp({ content: chunks![i] });
+            }
+            return;
         }).catch((err) => {
             Logger.error(err);
             interaction.reply({ content: `${err.status} ${err.name}` });
