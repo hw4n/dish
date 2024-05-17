@@ -7,8 +7,8 @@ module.exports = {
     .setName('reinit')
     .setDescription('sets every user\'s init flag to false'),
     async execute(interaction: any) {
-        if (!interaction.guild) return;
         if (!interaction.member.permissions.has(PermissionsBitField.Flags.Administrator)) return;
+        await interaction.deferReply();
 
         await User.find({}).then((users) => {
             users.forEach(user => {
@@ -17,6 +17,6 @@ module.exports = {
                 Logger.info(`Reinitialized ${user.id}`);
             });
         });
-        await interaction.reply({ content: 'initialized flag reset for all users', ephemeral: true});
+        await interaction.editReply({ content: 'initialized flag reset for all users', ephemeral: true});
     },
 };
