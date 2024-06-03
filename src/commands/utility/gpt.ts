@@ -11,12 +11,18 @@ module.exports = {
     data: new SlashCommandBuilder()
     .setName('gpt')
     .setDescription('Generates answer from GPT model')
-    .addStringOption(option => option.setName('question').setDescription('Question to ask').setRequired(true)),
+    .addStringOption(option => option.setName('question').setDescription('Question to ask').setRequired(true))
+    .addStringOption(option => option.setName('image').setDescription('Image URL to attach').setRequired(false)),
     async execute(interaction: any) {
         Logger.info(`${interaction.user.id} asked (${interaction.options.getString('question')})`);
         await interaction.deferReply();
         await openai.chat.completions.create({
-            messages: [{role: 'user', content: interaction.options.getString('question')}],
+            messages: [{
+                role: 'user',
+                content: [
+                    { type: 'text', text: interaction.options.getString('question') },
+                    { type: 'image_url', image_url: { url: interaction.options.getString('image') }}
+            ]}],
             model: 'gpt-4o',
             max_tokens: 1000,
         }).then(chatCompletion => {
@@ -28,7 +34,7 @@ module.exports = {
             return;
         }).catch((err) => {
             Logger.error(err);
-            interaction.reply({ content: `${err.status} ${err.name}` });
+            interaction.followUp({ content: err });
         });
     },
 };
