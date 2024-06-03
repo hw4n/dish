@@ -11,6 +11,7 @@ interface IUser extends Document {
     totalCommandsExecuted: number;
     initialize(): Promise<void>;
     balance: number;
+    tokensUsed: number;
 }
 
 const userSchema = new Schema<IUser>({
@@ -40,6 +41,10 @@ const userSchema = new Schema<IUser>({
         default: 0
     },
     balance: {
+        type: Number,
+        default: 0
+    },
+    tokensUsed: {
         type: Number,
         default: 0
     }

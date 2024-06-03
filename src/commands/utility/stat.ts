@@ -50,6 +50,11 @@ module.exports = {
                         name: "balance",
                         value: `${user.balance} (#${balanceRank + 1})`,
                         inline: true
+                    },
+                    {
+                        name: "tokens",
+                        value: `${user.tokensUsed} (#${balanceRank + 1})`,
+                        inline: true
                     }],
                 thumbnail: {
                     url: interaction.user.avatarURL()

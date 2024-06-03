@@ -2,6 +2,7 @@ import { SlashCommandBuilder } from 'discord.js';
 import Logger from '../../helper/logger';
 import OpenAI from 'openai';
 import Local from '../../helper/local';
+import User from '../../models/User';
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_APIKEY,
@@ -16,13 +17,14 @@ module.exports = {
     async execute(interaction: any) {
         Logger.info(`${interaction.user.id} asked (${interaction.options.getString('question')})`);
         await interaction.deferReply();
+
+        let content: [any] = [{ type: 'text', text: interaction.options.getString('question') }];
+        if (interaction.options.getString('image')) {
+            content.push({ type: 'image_url', image_url: { url: interaction.options.getString('image') } });
+        }
+
         await openai.chat.completions.create({
-            messages: [{
-                role: 'user',
-                content: [
-                    { type: 'text', text: interaction.options.getString('question') },
-                    { type: 'image_url', image_url: { url: interaction.options.getString('image') }}
-            ]}],
+            messages: [{ role: 'user', content }],
             model: 'gpt-4o',
             max_tokens: 1000,
         }).then(chatCompletion => {
@@ -31,6 +33,8 @@ module.exports = {
             for (let i = 1; i < chunks!.length; i++) {
                 interaction.followUp({ content: chunks![i] });
             }
+            User.findOneAndUpdate({ id: interaction.user.id }, { id: interaction.user.id, $inc: { tokensUsed: chatCompletion.usage?.total_tokens } })
+                .then((user) => Logger.chat(`${interaction.user.id} tokensUsed ${user?.tokensUsed} (${chatCompletion.usage?.prompt_tokens} + ${chatCompletion.usage?.completion_tokens})`));
             return;
         }).catch((err) => {
             Logger.error(err);
