@@ -10,8 +10,6 @@ module.exports = {
         if (message.author.bot) return;
         if (message.guildId !== (process.env.DISCORD_PRODGUILD || process.env.DISCORD_TESTGUILD || "")) return;
 
-        console.log(message.content);
-
         if (!message.content) {
             if (message.attachments) {
                 const attachments = message.attachments.map(a => ({name: a.name, link: a.url}));
@@ -59,6 +57,7 @@ module.exports = {
                 setTimeout(() => { message.delete() }, 500);
                 User.findOneAndUpdate({ id: message.author.id }, { id: message.author.id, $inc: { totalMessagesNeutralized: 1 } }, { new: true, upsert: true })
                     .then((user) => Logger.chat(`${message.author.id} totalMessagesNeutralized ${user.totalMessagesNeutralized}`));
+                Logger.warning(`[dsam] ${message.id} neutralized`);
             }
         }
     },

@@ -85,9 +85,9 @@ mongoose.connection.on('connected', () => {
 
 		if (Local.dsamList.includes('@@@enable@@@')) {
 			Local.dsamEnabled = true;
-			Logger.success('[BOOT] dsam is enabled');
+			Logger.success('[dsam] enabled');
 		} else {
-			Logger.success('[BOOT] dsam is disabled');
+			Logger.success('[dsam] disabled');
 		}
 	});
 

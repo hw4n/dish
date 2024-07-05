@@ -37,7 +37,7 @@ module.exports = {
                 await Word.create({ word: '@@@enable@@@' });
                 Local.dsamList.push('@@@enable@@@');
                 Local.dsamEnabled = true;
-                Logger.info(`dsam enabled`);
+                Logger.info(`[dsam] enabled`);
                 return await interaction.editReply({ content: `dsam enabled`, ephemeral: true });
             });
         }
@@ -52,7 +52,7 @@ module.exports = {
 
                 Local.dsamList = Local.dsamList.filter((word) => word !== '@@@enable@@@');
                 Local.dsamEnabled = false;
-                Logger.info(`dsam disabled`);
+                Logger.info(`[dsam] disabled`);
                 return await interaction.editReply({ content: `dsam disabled`, ephemeral: true });
             });
         }
