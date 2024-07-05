@@ -8,6 +8,7 @@ interface IUser extends Document {
     totalMessagesSent: number;
     totalMessagesEdited: number;
     totalMessagesDeleted: number;
+    totalMessagesNeutralized: number;
     totalCommandsExecuted: number;
     initialize(): Promise<void>;
     balance: number;
@@ -33,6 +34,10 @@ const userSchema = new Schema<IUser>({
         default: 0
     },
     totalMessagesDeleted: {
+        type: Number,
+        default: 0
+    },
+    totalMessagesNeutralized: {
         type: Number,
         default: 0
     },

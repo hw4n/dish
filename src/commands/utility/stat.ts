@@ -19,6 +19,7 @@ module.exports = {
             const sentRank = await User.countDocuments({ totalMessagesSent: { $gt: user.totalMessagesSent } });
             const editedRank = await User.countDocuments({ totalMessagesEdited: { $gt: user.totalMessagesEdited } });
             const deletedRank = await User.countDocuments({ totalMessagesDeleted: { $gt: user.totalMessagesDeleted } });
+            const neutralizedRank = await User.countDocuments({ totalMessagesNeutralized: { $gt: user.totalMessagesNeutralized } });
             const commandRank = await User.countDocuments({ totalCommandsExecuted: { $gt: user.totalCommandsExecuted } });
             const balanceRank = await User.countDocuments({ balance: { $gt: user.balance } });
             
@@ -39,6 +40,11 @@ module.exports = {
                     {
                         name: "deleted",
                         value: `${user.totalMessagesDeleted} (#${deletedRank + 1})`,
+                        inline: true
+                    },
+                    {
+                        name: "neutralized",
+                        value: `${user.totalMessagesNeutralized} (#${deletedRank + 1})`,
                         inline: true
                     },
                     {

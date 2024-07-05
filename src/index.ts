@@ -7,6 +7,8 @@ import mongoose from 'mongoose';
 
 import Logger from './helper/logger';
 import User from './models/User';
+import Word from './models/Word';
+import Local from './helper/local';
 
 const token = process.env.DISCORD_TOKEN;
 const client = new Client({ intents: [
@@ -76,6 +78,19 @@ if (!process.env.MONGODB_URI) {
 
 mongoose.connection.on('connected', () => {
 	Logger.success('Connected to MongoDB');
+
+	Word.find().then((words: any) => {
+		Local.dsamList = words.map((word: any) => word.word);
+		Logger.success(`Loaded ${words.length} words from database`);
+
+		if (Local.dsamList.includes('@@@enable@@@')) {
+			Local.dsamEnabled = true;
+			Logger.success('[BOOT] dsam is enabled');
+		} else {
+			Logger.success('[BOOT] dsam is disabled');
+		}
+	});
+
 	client.login(token);
 });
 
