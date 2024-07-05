@@ -38,7 +38,7 @@ module.exports = {
             if (possibleLinks) {
                 for (let link of possibleLinks) {
                     if (fire) break;
-                    let decodedLink = decodeURIComponent(link);
+                    let decodedLink = decodeURIComponent(link.toLowerCase());
                     for (let word of Local.dsamList) {
                         if (decodedLink.includes(word)) {
                             fire = true;
