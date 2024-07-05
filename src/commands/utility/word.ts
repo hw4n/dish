@@ -40,6 +40,7 @@ module.exports = {
                 Logger.info(`[dsam] enabled`);
                 return await interaction.editReply({ content: `dsam enabled`, ephemeral: true });
             });
+            return;
         }
 
         if (option === 'disable') {
@@ -55,9 +56,8 @@ module.exports = {
                 Logger.info(`[dsam] disabled`);
                 return await interaction.editReply({ content: `dsam disabled`, ephemeral: true });
             });
+            return;
         }
-
-        if (option !== 'add' || option !== 'remove') return;
 
         const inputWord = interaction.options.getString('word');
         if (!inputWord) {
@@ -71,7 +71,7 @@ module.exports = {
 
                 await Word.create({ word: inputWord });
                 Local.dsamList.push(inputWord);
-                Logger.info(`'${inputWord}' added to list`);
+                Logger.info(`'[dsam] ${inputWord}' added to list`);
                 return await interaction.editReply({ content: `'${inputWord}' added to list`, ephemeral: true });
             });
         }
@@ -85,7 +85,7 @@ module.exports = {
                     return await interaction.editReply({ content: 'Word not found', ephemeral: true });
 
                 Local.dsamList = Local.dsamList.filter((word) => word !== inputWord);
-                Logger.info(`'${inputWord}' removed from list`);
+                Logger.info(`[dsam] '${inputWord}' removed from list`);
                 return await interaction.editReply({ content: `'${inputWord}' removed from list`, ephemeral: true });
             });
         }
