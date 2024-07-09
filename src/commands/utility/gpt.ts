@@ -38,7 +38,7 @@ module.exports = {
             return;
         }).catch((err) => {
             Logger.error(err);
-            interaction.followUp({ content: err });
+            interaction.followUp({ content: err.message });
         });
     },
 };
