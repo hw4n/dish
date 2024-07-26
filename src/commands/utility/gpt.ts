@@ -25,7 +25,7 @@ module.exports = {
 
         await openai.chat.completions.create({
             messages: [{ role: 'user', content }],
-            model: 'gpt-4o',
+            model: 'gpt-4o-mini',
             max_tokens: 1000,
         }).then(chatCompletion => {
             const chunks = chatCompletion.choices[0].message.content!.match(/[\s\S]{1,2000}/g);
