@@ -95,3 +95,26 @@ mongoose.connection.on('connected', () => {
 });
 
 mongoose.connect(process.env.MONGODB_URI);
+
+import * as express from 'express';
+const app = express();
+
+import * as cors from 'cors';
+const allowedOrigins = process.env.ALLOWED_ORIGINS!.split(',') || [];
+Logger.info(`Allowed origins: ${allowedOrigins}`);
+app.use(cors({
+	origin: function(origin, callback) {
+		if (allowedOrigins.includes(origin!)) {
+			callback(null, true);
+		} else {
+			callback(new Error('Not allowed by CORS'));
+			Logger.warning(`Origin '${origin}' not allowed by CORS`);
+		}
+	}
+}));
+
+app.use('/chats', require('./routes/chats'));
+const API_PORT = process.env.API_PORT || 5453;
+app.listen(API_PORT, () => {
+	Logger.success(`Listening on port ${API_PORT}`);
+});
