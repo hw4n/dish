@@ -15,8 +15,12 @@ module.exports = {
         }).then((chat) => {
             if (!chat) return;
 
+            let updatedMessage = CryptoJS.AES.encrypt(message.reactions.message.content, process.env.CRYPTO_KEY + message.author.id).toString();
+
+            if (chat.message === updatedMessage) return
+
             chat.history.push(chat.message);
-            chat.message = CryptoJS.AES.encrypt(message.reactions.message.content, process.env.CRYPTO_KEY + message.author.id).toString();
+            chat.message = updatedMessage;
             chat.edited = true;
 
             chat.save().then(() => Logger.chatUpdate(`${chat.cid} edited`));
