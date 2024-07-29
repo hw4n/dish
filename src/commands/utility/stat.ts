@@ -22,6 +22,7 @@ module.exports = {
             const neutralizedRank = await User.countDocuments({ totalMessagesNeutralized: { $gt: user.totalMessagesNeutralized } });
             const commandRank = await User.countDocuments({ totalCommandsExecuted: { $gt: user.totalCommandsExecuted } });
             const balanceRank = await User.countDocuments({ balance: { $gt: user.balance } });
+            const tokenRank = await User.countDocuments({ tokensUsed: { $gt: user.tokensUsed } });
             
             interaction.editReply({ embeds: [{
                 title: `${interaction.user.globalName}'s statistics`,
@@ -44,7 +45,7 @@ module.exports = {
                     },
                     {
                         name: "neutralized",
-                        value: `${user.totalMessagesNeutralized} (#${deletedRank + 1})`,
+                        value: `${user.totalMessagesNeutralized} (#${neutralizedRank + 1})`,
                         inline: true
                     },
                     {
@@ -59,7 +60,7 @@ module.exports = {
                     },
                     {
                         name: "tokens",
-                        value: `${user.tokensUsed} (#${balanceRank + 1})`,
+                        value: `${user.tokensUsed} (#${tokenRank + 1})`,
                         inline: true
                     }],
                 thumbnail: {
