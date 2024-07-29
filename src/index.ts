@@ -15,7 +15,8 @@ const client = new Client({ intents: [
 	GatewayIntentBits.Guilds,
 	GatewayIntentBits.GuildMessages,
 	GatewayIntentBits.MessageContent,
-	GatewayIntentBits.GuildVoiceStates
+	GatewayIntentBits.GuildVoiceStates,
+	GatewayIntentBits.GuildMembers,
 ]});
 
 client.commands = new Collection();
@@ -114,6 +115,7 @@ app.use(cors({
 }));
 
 app.use('/chats', require('./routes/chats'));
+app.use('/users', require('./routes/users'));
 const API_PORT = process.env.API_PORT || 5453;
 app.listen(API_PORT, () => {
 	Logger.success(`Listening on port ${API_PORT}`);

@@ -13,6 +13,8 @@ interface IUser extends Document {
     initialize(): Promise<void>;
     balance: number;
     tokensUsed: number;
+    nickname: string;
+    avatar: string;
 }
 
 const userSchema = new Schema<IUser>({
@@ -52,6 +54,14 @@ const userSchema = new Schema<IUser>({
     tokensUsed: {
         type: Number,
         default: 0
+    },
+    nickname: {
+        type: String,
+        default: '(not mapped yet)'
+    },
+    avatar: {
+        type: String,
+        default: ''
     }
 });
 
