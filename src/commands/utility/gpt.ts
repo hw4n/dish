@@ -28,7 +28,8 @@ module.exports = {
             model: 'gpt-4o-mini',
             max_tokens: 1000,
         }).then(chatCompletion => {
-            const chunks = chatCompletion.choices[0].message.content!.match(/[\s\S]{1,2000}/g);
+            let reply = `## [Q] ${content[0].text}\n## [A]\n` + chatCompletion.choices[0].message.content!;
+            const chunks = reply.match(/[\s\S]{1,2000}/g);
             interaction.editReply({ content: chunks![0] });
             for (let i = 1; i < chunks!.length; i++) {
                 interaction.followUp({ content: chunks![i] });
