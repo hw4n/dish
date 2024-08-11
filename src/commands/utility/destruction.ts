@@ -10,9 +10,9 @@ module.exports = {
         if (!interaction.guild) return;
         
         if (!interaction.options.getInteger('minute'))
-            await interaction.reply({ content: 'Disconnecting all users from the voice channel', ephemeral: true });
+            await interaction.reply({ content: 'Disconnecting all users from the voice channel' });
         else
-            await interaction.reply({ content: `Disconnecting all users from the voice channel in ${interaction.options.getInteger('minute')} minutes`, ephemeral: true });
+            await interaction.reply({ content: `Disconnecting all users from the voice channel in ${interaction.options.getInteger('minute')} minutes` });
         
         setTimeout(async() => {
             for (const [memberId, member] of interaction.guild.voiceStates.cache) {
