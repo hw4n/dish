@@ -8,6 +8,7 @@ class Local {
     static targetGuild = process.env.DISCORD_PRODGUILD || process.env.DISCORD_TESTGUILD || "";
     static dsamList: string[] = [];
     static dsamEnabled = false;
+    static userTempData: { [key: string]: { heat: number, cooldown: number } } = {};
 };
 
 export default Local;

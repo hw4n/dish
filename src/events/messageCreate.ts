@@ -33,8 +33,10 @@ module.exports = {
             .then((user) => Logger.chat(`${message.author.id} totalMessagesSent ${user.totalMessagesSent}`));
 
         if (Local.dsamEnabled) {
-            let possibleLinks = message.content.match('https://.+');
+            let userMessage = message.content.toLowerCase();
+            let possibleLinks = userMessage.match('https://.+');
             let fire = false;
+
             if (possibleLinks) {
                 for (let link of possibleLinks) {
                     if (fire) break;
@@ -48,16 +50,36 @@ module.exports = {
                 }
             }
 
-            if (fire) {
-                if (Local.production) {
-                    message.reply({ stickers: ['1258263821311807569'] });
-                } else {
-                    message.reply(':rocket:');
+            for (let word of Local.dsamList) {
+                if (userMessage.includes(word)) {
+                    fire = true;
+                    break;
                 }
-                setTimeout(() => { message.delete() }, 500);
-                User.findOneAndUpdate({ id: message.author.id }, { id: message.author.id, $inc: { totalMessagesNeutralized: 1 } }, { new: true, upsert: true })
-                    .then((user) => Logger.chat(`${message.author.id} totalMessagesNeutralized ${user.totalMessagesNeutralized}`));
-                Logger.warning(`[dsam] ${message.id} neutralized`);
+            }
+
+            if (fire) {
+                // count 3 messages to trigger cooldown
+                if (Local.userTempData[message.author.id].cooldown === 0) {
+                    Local.userTempData[message.author.id].heat++;
+                }
+                if (Local.userTempData[message.author.id].heat === 3) {
+                    Local.userTempData[message.author.id].heat = 0;
+                    Local.userTempData[message.author.id].cooldown += 4;
+                }
+
+                if (Local.userTempData[message.author.id].cooldown > 0) {
+                    Local.userTempData[message.author.id].cooldown--;
+
+                    if (Local.production) {
+                        message.reply({ stickers: ['1258263821311807569'] });
+                    } else {
+                        message.reply(':rocket:');
+                    }
+                    setTimeout(() => { message.delete() }, 500);
+                    User.findOneAndUpdate({ id: message.author.id }, { id: message.author.id, $inc: { totalMessagesNeutralized: 1 } }, { new: true, upsert: true })
+                        .then((user) => Logger.chat(`${message.author.id} totalMessagesNeutralized ${user.totalMessagesNeutralized}`));
+                    Logger.warning(`[dsam] ${message.id} neutralized`);
+                }
             }
         }
     },

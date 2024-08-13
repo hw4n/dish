@@ -17,6 +17,7 @@ module.exports = {
 
         client.guilds.cache.get(Local.targetGuild)?.members.fetch().then(members => {
             members.map(member => {
+                Local.userTempData[member.id] = { heat: 0, cooldown: 0 };
                 return {
                     nickname: member.nickname || member.user.globalName || member.user.username,
                     id: member.id,
