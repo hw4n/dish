@@ -4,6 +4,12 @@ import OpenAI from 'openai';
 import Local from '../../helper/local';
 import User from '../../models/User';
 
+// load prompt.txt to variable
+const fs = require('fs');
+const path = require('path');
+// put expected start prompt to prompt.txt
+const prompt = fs.readFileSync(path.resolve(__dirname, '../../../gpt_prompt.txt'), 'utf8');
+
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_APIKEY,
 });
@@ -24,9 +30,10 @@ module.exports = {
         }
 
         await openai.chat.completions.create({
-            messages: [{ role: 'user', content }],
+            messages: [{ role: 'system', content: prompt}, { role: 'user', content }],
             model: 'gpt-4o-mini',
             max_tokens: 1000,
+
         }).then(chatCompletion => {
             let reply = `## [Q] ${content[0].text}\n## [A]\n` + chatCompletion.choices[0].message.content!;
             const chunks = reply.match(/[\s\S]{1,2000}/g);

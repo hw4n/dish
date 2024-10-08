@@ -17,4 +17,4 @@ node_modules
 dist
 .env
 .todo
-prompt.txt
+*prompt.txt

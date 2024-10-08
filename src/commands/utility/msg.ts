@@ -8,7 +8,7 @@ import User from '../../models/User';
 const fs = require('fs');
 const path = require('path');
 // put expected start prompt to prompt.txt
-const prompt = fs.readFileSync(path.resolve(__dirname, '../../../prompt.txt'), 'utf8');
+const prompt = fs.readFileSync(path.resolve(__dirname, '../../../msg_prompt.txt'), 'utf8');
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_APIKEY,
