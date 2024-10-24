@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import QuickGPT from 'quickgpt';
 
 class Local {
     static version = fs.readFileSync(path.join(__dirname, '../../', '.git', 'refs', 'heads', 'master'), 'utf8').slice(0, 7);
@@ -9,6 +10,7 @@ class Local {
     static dsamList: string[] = [];
     static dsamEnabled = false;
     static userTempData: { [key: string]: { heat: number, cooldown: number } } = {};
+    static gpt: QuickGPT = new QuickGPT();
 };
 
 export default Local;

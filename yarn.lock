@@ -910,6 +910,7 @@ __metadata:
     express: "npm:^4.19.2"
     mongoose: "npm:^8.3.2"
     openai: "npm:^4.38.5"
+    quickgpt: "npm:^0.2.4"
     tsx: "npm:^4.7.2"
     typescript: "npm:^5.4.5"
   languageName: unknown
@@ -1930,6 +1931,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"openai@npm:^4.67.3":
+  version: 4.68.4
+  resolution: "openai@npm:4.68.4"
+  dependencies:
+    "@types/node": "npm:^18.11.18"
+    "@types/node-fetch": "npm:^2.6.4"
+    abort-controller: "npm:^3.0.0"
+    agentkeepalive: "npm:^4.2.1"
+    form-data-encoder: "npm:1.7.2"
+    formdata-node: "npm:^4.3.2"
+    node-fetch: "npm:^2.6.7"
+  peerDependencies:
+    zod: ^3.23.8
+  peerDependenciesMeta:
+    zod:
+      optional: true
+  bin:
+    openai: bin/cli
+  checksum: 10c0/4f81795d0847ad145815299fc4f6448f084f9db43ede651776ca636d4907ff9a07de9379b9feea5e54a2d96e95ee9bcc74c3284e13376bf80684be74e0041479
+  languageName: node
+  linkType: hard
+
 "p-map@npm:^4.0.0":
   version: 4.0.0
   resolution: "p-map@npm:4.0.0"
@@ -2017,6 +2040,15 @@ __metadata:
   dependencies:
     side-channel: "npm:^1.0.4"
   checksum: 10c0/4e4875e4d7c7c31c233d07a448e7e4650f456178b9dd3766b7cfa13158fdb24ecb8c4f059fa91e820dc6ab9f2d243721d071c9c0378892dcdad86e9e9a27c68f
+  languageName: node
+  linkType: hard
+
+"quickgpt@npm:^0.2.4":
+  version: 0.2.4
+  resolution: "quickgpt@npm:0.2.4"
+  dependencies:
+    openai: "npm:^4.67.3"
+  checksum: 10c0/6ea63d918ee2abefe6f8e22e4b650d613ea546ca4ce36406d42626371c1b8b2d8d730517babecd550c32d640a2d7a6989479e72651b3c210f47cec9c5c5ab4aa
   languageName: node
   linkType: hard
 
