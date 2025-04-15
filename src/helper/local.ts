@@ -13,7 +13,7 @@ class Local {
     static gpt: QuickGPT = new QuickGPT();
 };
 
-Local.gpt.setModel('o1');
-Local.gpt.setMaxToken(2000);
+Local.gpt.setModel('gpt-4.1');
+Local.gpt.setMaxToken(1500);
 
 export default Local;

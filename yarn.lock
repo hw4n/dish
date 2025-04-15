@@ -797,10 +797,10 @@ qs@6.13.0:
   dependencies:
     side-channel "^1.0.6"
 
-quickgpt@^0.3.5:
-  version "0.3.5"
-  resolved "https://registry.npmjs.org/quickgpt/-/quickgpt-0.3.5.tgz"
-  integrity sha512-uaxsdNoxCyC/WSsuaWyVs4VirF8kp695zwzS9ZPNI00c6Dx93yPVF7DyOVoYdIZvb7wqiLs2duJkXLeaus+xkQ==
+quickgpt@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.npmjs.org/quickgpt/-/quickgpt-0.4.1.tgz"
+  integrity sha512-r4NEQFUiBu6fI5KbtG0bVgtPQJWUdnTZll1PgR2Qr8lGtxrmcwcrWI3NiYoaDRoJ1GMATJpuPv3C8R31qdJ8Nw==
   dependencies:
     openai "^4.94.0"
 
