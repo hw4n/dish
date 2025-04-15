@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from 'discord.js';
+import { AttachmentBuilder, Message, SlashCommandBuilder } from 'discord.js';
 import Logger from '../../helper/logger';
 import Local from '../../helper/local';
 
@@ -14,12 +14,20 @@ module.exports = {
         Logger.info(`${interaction.user.id} asked (${question})`);
         await interaction.deferReply();
 
-        Local.gpt.Ask(question, image_url).then((response) => {
+        let lastEdit = new Date();
+
+        Local.gpt.AskStreaming({user_prompt: question, image_url}, async(string_chunk) => {
+            if (string_chunk.length < 1900 && lastEdit.getTime() + 500 < new Date().getTime()) {            
+                await interaction.editReply({ content: `## [Q] ${question}\n## [A]\n` + string_chunk });
+                lastEdit = new Date();
+            }
+            return Promise.resolve();
+        }).then(async(response) => {
             let reply = `## [Q] ${question}\n## [A]\n` + response;
             const chunks = reply.match(/[\s\S]{1,2000}/g);
-            interaction.editReply({ content: chunks![0] });
+            await interaction.editReply({ content: chunks![0] });
             for (let i = 1; i < chunks!.length; i++) {
-                interaction.followUp({ content: chunks![i] });
+                await interaction.followUp({ content: chunks![i] });
             }
             return;
         }).catch((err) => {
