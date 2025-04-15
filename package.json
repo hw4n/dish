@@ -20,7 +20,7 @@
     "express": "^4.19.2",
     "mongoose": "^8.3.2",
     "openai": "^4.38.5",
-    "quickgpt": "^0.4.1"
+    "quickgpt": "^0.4.5"
   },
   "devDependencies": {
     "@types/cors": "^2",
