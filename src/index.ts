@@ -97,10 +97,10 @@ mongoose.connection.on('connected', () => {
 
 mongoose.connect(process.env.MONGODB_URI);
 
-import * as express from 'express';
+import express from 'express';
 const app = express();
 
-import * as cors from 'cors';
+import cors from 'cors';
 const allowedOrigins = process.env.ALLOWED_ORIGINS!.split(',') || [];
 Logger.info(`Allowed origins: ${allowedOrigins}`);
 app.use(cors({

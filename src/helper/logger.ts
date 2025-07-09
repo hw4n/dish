@@ -1,4 +1,4 @@
-import * as chalk from 'chalk';
+import chalk from 'chalk';
 class Logger {
     static info(message: string) {
         console.log(chalk.blue(`[INFO] ${message}`));

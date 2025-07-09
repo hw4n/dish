@@ -1,7 +1,7 @@
 import { Events, Message } from 'discord.js';
 import Logger from '../helper/logger';
 import Chat from '../models/Chat';
-import * as CryptoJS from 'crypto-js';
+import CryptoJS from 'crypto-js';
 import User from '../models/User';
 
 module.exports = {
