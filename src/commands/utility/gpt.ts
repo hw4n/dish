@@ -4,8 +4,10 @@ import Local from "../../helper/local";
 import fs from "fs";
 import path from "path";
 import {
+    ResponseInput,
     ResponseInputImage,
     ResponseInputText,
+    Tool,
 } from "openai/resources/responses/responses";
 
 const prompt = fs.readFileSync(
@@ -43,52 +45,81 @@ module.exports = {
             });
         }
 
-        const userContent: Array<ResponseInputText | ResponseInputImage> = [
-            { type: "input_text", text: question },
-        ];
+        // 일단 시스템 프롬프트를 넣기
+        const input: ResponseInput = [{ role: "system", content: prompt }];
 
+        // 이미지 넣었냐 안넣었냐에 따라 분기해서 처리
         if (image_url) {
-            userContent.push({
-                type: "input_image",
-                image_url: image_url,
-                detail: "auto",
+            input.push({
+                role: "user",
+                content: [
+                    { type: "input_text", text: question },
+                    { type: "input_image", image_url, detail: "auto" },
+                ],
+            });
+        } else {
+            input.push({
+                role: "user",
+                content: [{ type: "input_text", text: question }],
             });
         }
 
-        const stream = await Local.openai.responses.create({
+        const tools = Local.openai_tools;
+
+        // 호출한다음에
+        const response = await Local.openai.responses.create({
             model: "gpt-4.1",
-            input: [
-                { role: "system", content: prompt },
-                {
-                    role: "user",
-                    content: userContent,
-                },
-            ],
-            tools: [],
+            input,
+            tools,
             max_output_tokens: 1500,
-            stream: true,
         });
 
-        let fullResponse = "";
-        for await (const chunk of stream) {
-            if (chunk.type === "response.output_text.delta") {
-                fullResponse += chunk.delta;
+        Logger.debug("Request ID: " + response.id);
+
+        await interaction.editReply({
+            content: `## [Q] ${question}\n## [A]\n(함수 실행 대기중)`,
+        });
+
+        // 최초 응답을 다시 넣기
+        input.push(response.output[0]);
+
+        // mcp 같은놈 불렀으면 실행
+        for (const todoCall of response.output) {
+            if (todoCall.type !== "function_call") {
+                continue;
             }
 
-            // 실시간 업데이트
-            if (
-                fullResponse.length < 1900 &&
-                lastEdit.getTime() + 500 < new Date().getTime()
-            ) {
-                await interaction.editReply({
-                    content: `## [Q] ${question}\n## [A]\n` + fullResponse,
-                });
-                lastEdit = new Date();
-            }
+            const name = todoCall.name;
+            const args = todoCall.arguments;
+            Logger.debug(
+                `Function call: ${name} with args: ${JSON.stringify(args)}`
+            );
+
+            //
+            // 여기서 실제 함수 호출
+            //
+
+            input.push({
+                type: "function_call_output",
+                call_id: todoCall.call_id,
+                output: `{c: 2}`,
+            });
+            Logger.debug("Appended input: " + JSON.stringify(input.slice(2)));
         }
 
-        // 최종 응답 처리
-        let reply = `## [Q] ${question}\n## [A]\n` + fullResponse;
+        Logger.debug(
+            "Before second request input: " + JSON.stringify(input.slice(2))
+        );
+        // 다시 GPT에게 응답을 요청
+        const response2 = await Local.openai.responses.create({
+            model: "gpt-4.1",
+            input,
+            tools,
+            max_output_tokens: 1500,
+        });
+
+        // 최종 응답 (필요하면 나눠서) 출력
+        let reply = `## [Q] ${question}\n## [A]\n` + response2.output_text;
         const chunks = reply.match(/[\s\S]{1,2000}/g);
         if (chunks) {
             await interaction.editReply({ content: chunks[0] });

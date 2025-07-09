@@ -1,10 +1,10 @@
 {
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "commonjs",
-    "outDir": "dist",
-    "strict": true,
-    "esModuleInterop": true
-  },
-  "include": ["./src/**/*", "commands/utility"]
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "commonjs",
+        "outDir": "dist",
+        "strict": true,
+        "esModuleInterop": true
+    },
+    "include": ["./src/**/*", "commands/utility"]
 }
