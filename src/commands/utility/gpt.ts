@@ -131,7 +131,7 @@ module.exports = {
                     input.push({
                         type: "function_call_output",
                         call_id: todoCall.call_id,
-                        output: response.data,
+                        output: JSON.stringify(response.data),
                     });
                     Logger.debug(
                         "Appended input: " + JSON.stringify(input.slice(2))
