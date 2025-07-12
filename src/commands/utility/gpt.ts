@@ -9,6 +9,7 @@ import {
     ResponseInputText,
     Tool,
 } from "openai/resources/responses/responses";
+import axios from "axios";
 
 const prompt = fs.readFileSync(
     path.resolve(__dirname, "../../../gpt_prompt.txt"),
@@ -116,16 +117,29 @@ module.exports = {
                 `Function call: ${name} with args: ${JSON.stringify(args)}`
             );
 
-            //
-            // 여기서 실제 함수 호출
-            //
+            if (name === "web_search") {
+                try {
+                    const response = await axios.post(
+                        "http://localhost:3000/browser/search",
+                        {
+                            args,
+                        }
+                    );
 
-            input.push({
-                type: "function_call_output",
-                call_id: todoCall.call_id,
-                output: `{c: 2}`,
-            });
-            Logger.debug("Appended input: " + JSON.stringify(input.slice(2)));
+                    console.log("-----\n" + response.data + "\n-----");
+
+                    input.push({
+                        type: "function_call_output",
+                        call_id: todoCall.call_id,
+                        output: response.data,
+                    });
+                    Logger.debug(
+                        "Appended input: " + JSON.stringify(input.slice(2))
+                    );
+                } catch (error) {
+                    Logger.error("Error calling web_search: " + error);
+                }
+            }
         }
 
         let response2;

@@ -1,23 +1,19 @@
 export default [
     {
-        name: "get_weather",
+        name: "web_search",
         type: "function",
-        description: "Determine weather in my location",
+        description: "Perform a search on the web",
         strict: true,
         parameters: {
             type: "object",
             properties: {
-                location: {
+                keyword: {
                     type: "string",
-                    description: "The city and state e.g. San Francisco, CA",
-                },
-                unit: {
-                    type: "string",
-                    enum: ["c", "f"],
+                    description: "Search keyword to look up on the web",
                 },
             },
             additionalProperties: false,
-            required: ["location", "unit"],
+            required: ["keyword"],
         },
     },
 ];

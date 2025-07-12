@@ -26,7 +26,7 @@ class Local {
     static userTempData: { [key: string]: { heat: number; cooldown: number } } =
         {};
     static openai = new OpenAI();
-    static openai_tools = openai_tools as Tool[];
+    static openai_tools = openai_tools as unknown as Tool[];
 }
 
 export default Local;
