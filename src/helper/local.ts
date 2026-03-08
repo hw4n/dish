@@ -1,8 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
 import { OpenAI } from "openai";
-import openai_tools from "./openai_tools";
-import { Tool } from "openai/resources/responses/responses";
 
 class Local {
     static version = fs
@@ -22,7 +20,6 @@ class Local {
     static targetGuild =
         process.env.DISCORD_PRODGUILD || process.env.DISCORD_TESTGUILD || "";
     static openai = new OpenAI();
-    static openai_tools = openai_tools as unknown as Tool[];
 }
 
 export default Local;

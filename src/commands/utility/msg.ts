@@ -1,20 +1,18 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import Logger from "../../helper/logger";
+import fs from "fs";
+import path from "path";
+import { ResponseInput } from "openai/resources/responses/responses";
 import Local from "../../helper/local";
+import Logger from "../../helper/logger";
 import {
-    ResponseInputText,
-    ResponseInputImage,
-    ResponseInput,
-} from "openai/resources/responses/responses";
-import axios from "axios";
+    appendSourcesToReply,
+    splitDiscordMessage,
+    WEB_SEARCH_TOOLS,
+} from "../../helper/openai_response";
 
-// load prompt.txt to variable
-const fs = require("fs");
-const path = require("path");
-// put expected start prompt to prompt.txt
 const prompt = fs.readFileSync(
     path.resolve(__dirname, "../../../msg_prompt.txt"),
-    "utf8"
+    "utf8",
 );
 
 module.exports = {
@@ -25,21 +23,19 @@ module.exports = {
             option
                 .setName("question")
                 .setDescription("Question to ask")
-                .setRequired(true)
+                .setRequired(true),
         )
         .addStringOption((option) =>
             option
                 .setName("image")
                 .setDescription("Image URL to attach")
-                .setRequired(false)
+                .setRequired(false),
         ),
     async execute(interaction: ChatInputCommandInteraction) {
-        let question = interaction.options.getString("question");
-        let image_url = interaction.options.getString("image");
+        const question = interaction.options.getString("question");
+        const imageUrl = interaction.options.getString("image");
         Logger.info(`${interaction.user.id} asked (${question})`);
         await interaction.deferReply();
-
-        let lastEdit = new Date();
 
         if (!question) {
             return interaction.editReply({
@@ -47,27 +43,29 @@ module.exports = {
             });
         }
 
-        // 화려한 로딩
-        let waitString = "Generating answer...";
-        const waitEmoji = ["⠋", "⠙", "⠸", "⠴", "⠦", "⠇"];
-        let waitEmojiIndex = 0;
+        const waitString = "Generating answer...";
+        const waitSteps = [".", "..", "..."];
+        let waitStepIndex = 0;
+        let waitActive = true;
         const waitInterval = setInterval(() => {
-            interaction.editReply({
-                content: `${waitString} ${waitEmoji[waitEmojiIndex++]}`,
-            });
-            waitEmojiIndex = waitEmojiIndex % waitEmoji.length;
+            if (!waitActive) {
+                return;
+            }
+
+            void interaction.editReply({
+                content: `${waitString}${waitSteps[waitStepIndex++]}`,
+            }).catch(() => undefined);
+            waitStepIndex %= waitSteps.length;
         }, 500);
 
-        // 일단 시스템 프롬프트를 넣기
         const input: ResponseInput = [{ role: "system", content: prompt }];
 
-        // 이미지 넣었냐 안넣었냐에 따라 분기해서 처리
-        if (image_url) {
+        if (imageUrl) {
             input.push({
                 role: "user",
                 content: [
                     { type: "input_text", text: question },
-                    { type: "input_image", image_url, detail: "auto" },
+                    { type: "input_image", image_url: imageUrl, detail: "auto" },
                 ],
             });
         } else {
@@ -77,101 +75,40 @@ module.exports = {
             });
         }
 
-        const tools = Local.openai_tools;
-
-        // 호출한다음에
-        const response = await Local.openai.responses.create({
-            model: "gpt-4.1",
-            input,
-            tools,
-            max_output_tokens: 1500,
-        });
-
-        Logger.debug("Request ID: " + response.id);
-
-        if (!response.output) {
-            // 만약 output이 없다면 function call을 안해서 끝났을테니
-            return interaction.editReply({
-                content: `## [mQ] ${question}\n## [mA]\n${response.output_text}`,
-            });
-        }
-
-        // 최초 응답을 다시 넣기
-        input.push(response.output[0]);
-
-        let preInputLength = input.length;
-        // mcp 같은놈 불렀으면 실행
-        for (const todoCall of response.output) {
-            if (todoCall.type !== "function_call") {
-                continue;
-            }
-
-            waitInterval && clearInterval(waitInterval);
-
-            await interaction.editReply({
-                content: `## [mQ] ${question}\n## [mA]\n(함수 실행 대기중)`,
-            });
-
-            const name = todoCall.name;
-            const args = todoCall.arguments;
-            Logger.debug(
-                `Function call: ${name} with args: ${JSON.stringify(args)}`
-            );
-
-            if (name === "web_search") {
-                try {
-                    const response = await axios.post(
-                        "http://localhost:3000/browser/search",
-                        {
-                            args,
-                        }
-                    );
-
-                    console.log("-----\n" + response.data + "\n-----");
-
-                    input.push({
-                        type: "function_call_output",
-                        call_id: todoCall.call_id,
-                        output: JSON.stringify(response.data),
-                    });
-                    Logger.debug(
-                        "Appended input: " + JSON.stringify(input.slice(2))
-                    );
-                } catch (error) {
-                    Logger.error("Error calling web_search: " + error);
-                }
-            }
-        }
-
-        let response2;
-        if (input.length > preInputLength) {
-            Logger.debug(
-                "Before second request input: " + JSON.stringify(input.slice(2))
-            );
-            // 다시 GPT에게 응답을 요청
-            response2 = await Local.openai.responses.create({
-                model: "gpt-4.1",
+        try {
+            const response = await Local.openai.responses.create({
+                model: "gpt-5.4",
                 input,
-                tools,
+                tools: WEB_SEARCH_TOOLS,
                 max_output_tokens: 1500,
             });
-        }
 
-        waitInterval && clearInterval(waitInterval);
+            Logger.debug("Request ID: " + response.id);
 
-        // 진짜 최종 응답을 가져오기
-        let responseText = response2?.output_text
-            ? response2.output_text
-            : response.output_text;
+            const reply = appendSourcesToReply(
+                `## [mQ] ${question}\n## [mA]\n${response.output_text}`,
+                response,
+            );
+            const chunks = splitDiscordMessage(reply);
 
-        // 최종 응답 (필요하면 나눠서) 출력
-        let reply = `## [mQ] ${question}\n## [mA]\n` + responseText;
-        const chunks = reply.match(/[\s\S]{1,2000}/g);
-        if (chunks) {
-            await interaction.editReply({ content: chunks[0] });
-            for (let i = 1; i < chunks.length; i++) {
-                await interaction.followUp({ content: chunks[i] });
+            if (chunks.length > 0) {
+                waitActive = false;
+                clearInterval(waitInterval);
+                const replyMessage = await interaction.editReply({
+                    content: chunks[0],
+                });
+                await replyMessage.suppressEmbeds(true);
+                for (const chunk of chunks.slice(1)) {
+                    const followUpMessage = await interaction.followUp({
+                        content: chunk,
+                        withResponse: true,
+                    });
+                    await followUpMessage.suppressEmbeds(true);
+                }
             }
+        } finally {
+            waitActive = false;
+            clearInterval(waitInterval);
         }
     },
 };
