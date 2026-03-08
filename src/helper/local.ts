@@ -21,10 +21,6 @@ class Local {
     static production = typeof process.env.DISCORD_PRODGUILD !== "undefined";
     static targetGuild =
         process.env.DISCORD_PRODGUILD || process.env.DISCORD_TESTGUILD || "";
-    static dsamList: string[] = [];
-    static dsamEnabled = false;
-    static userTempData: { [key: string]: { heat: number; cooldown: number } } =
-        {};
     static openai = new OpenAI();
     static openai_tools = openai_tools as unknown as Tool[];
 }
